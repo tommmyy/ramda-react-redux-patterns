@@ -1,0 +1,9 @@
+# Belongs at: /_data/navigation.yml
+
+- title: Home
+  url: /
+
+- title: React patterns
+  url: /01-react-ramda.html
+- title: Redux patterns
+  url: /02-redux-ramda.html
