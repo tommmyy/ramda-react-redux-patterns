@@ -2,7 +2,9 @@
 
 {% include toc.html %}
 
-## 1. Selectors
+## Patterns
+
+### 1. Selectors
 
 ```js
 const items = (state) => fromEntities.getItems(state.entities)
@@ -14,7 +16,7 @@ const items = R.o(fromEntities.getItems, R.path(['entities']);
 const isLoading = R.path(['ui', 'loading']);
 ```
 
-## 2. Memoized Selectors
+### 2. Memoized Selectors
 
 ```js
 const createSelector = (path) => R.memoizeWith(R.identity, R.path(path))
@@ -24,7 +26,7 @@ const createSelector = (path) => R.memoizeWith(R.identity, R.path(path))
 const isLoading = createSelector(['ui', 'loading'])
 ```
 
-## 3. Mapping state
+### 3. Mapping state
 
 ```js
 const mapStateToProps = (state, ownProps) => ({
@@ -40,17 +42,22 @@ const mapStateToProps = R.applySpec({
 })
 ```
 
-## R.cond in reducer
+### 3. Replacing `switch` in reducer
 
-## Localized State
+Work in progress
 
-### Problem
+---
 
-Reusable reducer:
+
+### 4. Local State with `filteredReducer` #1
+
+In examples we will use following reducer:
 
 ```js
 const add = (state = 0, action) => action.type === "INCREMENT" ? state + 1 : state
 ```
+
+Lets see following code as an introduction to the problem:
 
 ```js
 
@@ -66,9 +73,10 @@ store.dispatch({ type: "INCREMENT" })
 
 ```
 
+As we can see, after "INCREMENT" action, every slice of the state, that is managed by `add` reducer, will be incremented.
+Following pattern solves the problem of how to target the specific slice of state.
 
-### 1. Vanilla namespacing
-
+Following most verbose solution uses `action.meta` to determine if the `add` reducer should be called:
 
 ```js
 const root = combineReducers({
@@ -88,9 +96,10 @@ store.dispatch({ type: "INCREMENT", meta: { namespace: "@WIDGET-B" } })
 // { widgetA: 1, widgetB: 1 }
 ```
 
-**Introducing `filteredReducer` (TODO: link to redux site)**
+To reducer boilerplate we can introduce `filteredReducer` function (see ):
 
 ```js
+// Before Ramda
 const filteredReducer = (cond, reducer) =>
 	(state, action) =>
 		cond(action) ? reducer(state, action) : state;
