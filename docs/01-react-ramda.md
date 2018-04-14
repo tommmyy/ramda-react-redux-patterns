@@ -100,6 +100,7 @@ R.pipe(
 ```
 
 If you are composing from exactly two HoCs, you can use `R.o`.
+
 It is highly recommended to use just one of `R.o`, `R.compose`, `R.pipe` in the scope of your Application for composing HoCs.
 
 ### 3. Branching
@@ -110,7 +111,6 @@ Lets define following components:
 const Loading = R.always("Loading...");
 const Section = ({ content }) => <section>{content}</section>;
 ```
-
 
 
 ```jsx
