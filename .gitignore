@@ -22,3 +22,4 @@ yarn-error.log*
 
 .sass-cache
 NOTES.md
+/_site
