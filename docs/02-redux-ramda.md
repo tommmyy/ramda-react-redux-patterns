@@ -1,5 +1,7 @@
 # Redux patterns
 
+{% include toc.html %}
+
 ## 1. Selectors
 
 ```js

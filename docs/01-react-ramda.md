@@ -1,8 +1,10 @@
 # React patterns
 
+{% include toc.html %}
+
 ## Introduction
 
-### Recap of React in types
+### React Components
 
 We will speak about properties of React Component as `Props`. But in JS terms properties are just an plain object.
 
@@ -41,14 +43,14 @@ In example above `identity` HoC creates `NewContainer` which renders exactly the
 
 ### Examples of HoCs
 
-#### Collections of HoCs
+**Collections of HoCs**
 
 * [acdlite/recompose](https://github.com/acdlite/recompose)
 * [kriasoft/eact-decorators](https://github.com/kriasoft/react-decorators)
 * [jaredpalmer/react-fns](https://github.com/jaredpalmer/react-fns)
 * [klarna/higher-order-components](https://github.com/klarna/higher-order-components)
 
-#### Providing a context of libraries
+**Providing a context of libraries**
 
 In many cases is HoC used for adding functionality to your component from certain library via React context API.
 
@@ -62,7 +64,17 @@ See:
 
 ### 1. Static Component
 
+
 ```jsx
+// Before Ramda:
+const Loading = () => "Loading...";
+
+ReactDOM.render(<Loading />, rootEl) // renders "Loading..."
+```
+
+
+```jsx
+// After Ramda:
 const Loading = R.always("Loading...");
 
 ReactDOM.render(<Loading />, rootEl) // renders "Loading..."
@@ -71,9 +83,12 @@ ReactDOM.render(<Loading />, rootEl) // renders "Loading..."
 
 ### 2. Composition of High-order components
 
-Instead of nesting calls of HoCs:
+Use function composition instead of nesting calls.
+
+---
 
 ```js
+// Before Ramda
 connect()(
 	reduxForm()(
 		injectIntl(Container)
@@ -81,9 +96,8 @@ connect()(
 )
 ```
 
-use composition of functions:
-
 ```js
+// After Ramda
 R.compose(
 	connect(),
 	reduxForm(),
@@ -105,6 +119,10 @@ It is highly recommended to use just one of `R.o`, `R.compose`, `R.pipe` in the 
 
 ### 3. Branching
 
+Use `R.ifElse` for conditional render.
+
+---
+
 Lets define following components:
 
 ```jsx
@@ -115,14 +133,14 @@ const Section = ({ content }) => <section>{content}</section>;
 
 ```jsx
 // Before Ramda:
-
 const Content = (props) => props.loading ? <Loading /> : <Section {...props} />
 ```
 
 ```jsx
 // After Ramda:
-const withLoading = ifElse(prop('loading'), Loading)
+const withLoading = R.ifElse(prop('loading'), Loading)
 
 const Content = withLoading(Section)
 ```
 
+In this example `withLoading` HoC can be simply reused for all your components with `loading` property.
