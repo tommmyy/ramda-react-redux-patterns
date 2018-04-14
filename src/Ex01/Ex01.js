@@ -1,5 +1,6 @@
-import { always } from 'ramda';
+import React from 'react';
+import { Loading } from './Loading';
 
-const Ex01 = always("Ex01");
+const Ex01 = () => <Loading />;
 
 export { Ex01 };

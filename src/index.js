@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { Ex01 } from './Ex01';
+import { Ex02 } from './Ex02';
 
-ReactDOM.render(<Ex01 />, document.getElementById('root'));
+ReactDOM.render(<Ex02 />, document.getElementById('root'));
 

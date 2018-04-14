@@ -4,31 +4,18 @@
 
 ### Recap of React in types
 
-We will speak about properties of React Component as `Props` for convenince. But in JS terms properties are just plain object:
+We will speak about properties of React Component as `Props`. But in JS terms properties are just an plain object.
+
+For more compact syntax instead of `React.Component`, `React.Element` we will write `Component`, `Element`.
+
+In general, we will work with functional stateless components - pure functions that takes `Props` as an argument and returns JSX/`Element`:
 
 ```
-Props :: Object
+React.Component :: Props -> Element
 ```
 
-In general we will work with functional stateless components in proposed patterns - pure function that takes `Props` as an argument and returns JSX/React.Element:
 
-```
-React.Component :: Props -> React.Element
-```
-
-For more compact syntax instead of:
-
-```
-React.Component, React.Element
-```
-
-we will write
-
-```
-Component, Element
-```
-
-### What is a High-order Component (HoC)?
+### High-order Component (HoC)
 
 A Higher-order Component is a function that accepts a `Component` as an argument and returns another `Component`:
 
@@ -67,21 +54,22 @@ In many cases is HoC used for adding functionality to your component from certai
 
 See:
 
-* [redux](https://github.com/reactjs/redux) - `connect`
-* [reduxForm](https://github.com/erikras/redux-form) - `reduxForm`
-* [react-intl](https://github.com/yahoo/react-intl) - `injectIntl` HoC
+* [reactjs/redux](https://github.com/reactjs/redux) - `connect`
+* [yahoo/react-intl](https://github.com/yahoo/react-intl) - `injectIntl` HoC
+* [erikras/redux-form](https://github.com/erikras/redux-form) - `reduxForm`
 
+## Patterns
 
-## 1. Static Component
+### 1. Static Component
 
 ```jsx
-const Ex01 = R.always("Ex01");
+const Loading = R.always("Loading...");
 
-ReactDOM.render(<Ex01 />, rootEl) // renders "Ex01"
+ReactDOM.render(<Loading />, rootEl) // renders "Loading..."
 ```
 
 
-## 2. Composition of High-order components
+### 2. Composition of High-order components
 
 Instead of nesting calls of HoCs:
 
@@ -93,7 +81,7 @@ connect()(
 )
 ```
 
-use function composition:
+use composition of functions:
 
 ```js
 R.compose(
@@ -114,4 +102,27 @@ R.pipe(
 If you are composing from exactly two HoCs, you can use `R.o`.
 It is highly recommended to use just one of `R.o`, `R.compose`, `R.pipe` in the scope of your Application for composing HoCs.
 
+### 3. Branching
+
+Lets define following components:
+
+```jsx
+const Loading = R.always("Loading...");
+const Section = ({ content }) => <section>{content}</section>;
+```
+
+
+
+```jsx
+// Before Ramda:
+
+const Content = (props) => props.loading ? <Loading /> : <Section {...props} />
+```
+
+```jsx
+// After Ramda:
+const withLoading = ifElse(prop('loading'), Loading)
+
+const Content = withLoading(Section)
+```
 
