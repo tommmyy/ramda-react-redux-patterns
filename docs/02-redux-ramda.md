@@ -42,7 +42,7 @@ const mapStateToProps = R.applySpec({
 })
 ```
 
-### 3. Replacing `switch` inside reducer
+### 4. Replacing `switch` inside reducer
 
 Work in progress
 
@@ -90,7 +90,7 @@ const counter = switchReducer(initialState, [
 
 ```
 
-### 4. Local State with `filteredReducer`
+### 5. Local State with `filteredReducer`
 
 In examples we will use following reducer:
 
