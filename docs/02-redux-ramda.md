@@ -29,6 +29,7 @@ const isLoading = createSelector(['ui', 'loading'])
 ### 3. Mapping state
 
 ```js
+// Before Ramda
 const mapStateToProps = (state, ownProps) => ({
 	items: getItems(state, ownProps),
 	isLoading: isLoading(state, ownProps),
@@ -36,13 +37,68 @@ const mapStateToProps = (state, ownProps) => ({
 ```
 
 ```js
+// After Ramda
 const mapStateToProps = R.applySpec({
 	items: getItems,
 	isLoading: isLoading,
 })
 ```
 
-### 4. Replacing `switch` inside reducer
+### 4. Creating action creators
+
+We want to use following action creators in our application:
+
+```js
+reset() // { type": "RESET" }
+increment(1) // { payload: 1, type: "INCREMENT" }
+fetchItems({ items: "some" })
+// => { meta: { page: 0 }, payload: "some", type: "FETCH_ITEMS" }
+```
+
+* `reset` is simpliest action creator and does not use any arguments.
+* `increment` takes one argument that represents `payload` of the action
+* `fetchItems` is the most complex one:
+  * computes `payload` from first argument and
+  * adds `meta` attribute to the action
+
+---
+
+We can introduce factory functions (`createAction`, `createConstantAction`, `createSimpleAction`), that can encapsulates creation of action creators.
+
+```js
+// Before Ramda
+const createAction = (type, getPayload, getMeta) =>
+  (payload, meta) => ({
+    type,
+    payload: getPayload(payload),
+    meta: getMeta(meta),
+  })
+const createConstantAction = (type) => createAction(type, x => undefined, () => undefined);
+const createSimpleAction = (type) => createAction(type, x => x, () => undefined);
+
+const reset = createContantAction("RESET")
+const increment = createSimpleAction("INCREMENT");
+const fetchItems = createAction("FETCH_ITEMS", (x) => x.items, () => ({ page: 0 }))
+```
+
+```js
+// After Ramda
+const createAction = R.curry((type, getPayload, getMeta) => R.compose(
+  R.reject(R.isNil),
+  R.applySpec({
+    type: R.always(type),
+    payload: getPayload,
+    meta: getMeta,
+  })));
+const createSimpleAction = createAction(R.__, R.identity, R.always(null));
+const createContantAction = createAction(R.__, R.always(null), R.always(null));
+
+const increment = createSimpleAction("INCREMENT");
+const reset = createContantAction("RESET")
+const fetchItems = createAction("FETCH_ITEMS", R.prop("items"), R.always({ page: 0 }))
+```
+
+### 5. Replacing `switch` inside reducer
 
 ```js
 // Before Ramda:
@@ -90,7 +146,7 @@ counter(3, { type: "RESET" }) // 1
 counter(3, { type: "LOAD_ITEMS" }) // 3
 ```
 
-### 5. Local State with `filteredReducer`
+### 6. Local State with `filteredReducer`
 
 In examples we will use following reducer:
 
