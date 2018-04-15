@@ -55,7 +55,7 @@ fetchItems({ items: "some" })
 // => { meta: { page: 0 }, payload: "some", type: "FETCH_ITEMS" }
 ```
 
-* `reset` is simpliest action creator and does not use any arguments.
+* `reset` is simpliest action creator - it does not use any arguments
 * `increment` takes one argument that represents `payload` of the action
 * `fetchItems` is the most complex one:
   * computes `payload` from first argument and
@@ -104,12 +104,12 @@ const fetchItems = createAction("FETCH_ITEMS", R.prop("items"), R.always({ page:
 // Before Ramda:
 cosnt initialState = 0;
 const counter = (state = initialState, action) => switch (action.type) {
-	case "INCREMENT":
-		return state + action.payload;
-	case "RESET":
-		return initialState;
-	default:
-		return state;
+  case "INCREMENT":
+    return state + action.payload;
+  case "RESET":
+    return initialState;
+  default:
+    return state;
 }
 ```
 
