@@ -1,6 +1,5 @@
 # Ramda: patterns for React and Redux
 
-**⚠️ Work in progress ⚠️**
+[➡️ tommmyy.github.io/ramda-react-redux-patterns ⬅️](https://tommmyy.github.io/ramda-react-redux-patterns/)
 
-**Note:**
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+**⚠️ Work in progress ⚠️**
