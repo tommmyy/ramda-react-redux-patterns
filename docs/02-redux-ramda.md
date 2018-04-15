@@ -44,10 +44,6 @@ const mapStateToProps = R.applySpec({
 
 ### 4. Replacing `switch` inside reducer
 
-Work in progress
-
----
-
 ```js
 // Before Ramda:
 cosnt initialState = 0;
@@ -58,6 +54,7 @@ const counter = (state = initialState, action) => switch (action.type) {
 		return initialState;
 	default:
 		return state;
+}
 ```
 
 ```js
@@ -80,6 +77,8 @@ const switchReducer = (initialState, rs) => R.compose(
     ])
 )(rs);
 
+//...
+
 // Than we can every reducer write with following convenient API:
 const initialState = 1
 const counter = switchReducer(initialState, [
@@ -87,7 +86,12 @@ const counter = switchReducer(initialState, [
 	["RESET", R.always(initialState)],
 ]);
 
+// ...
 
+counter(undefined, {}) // 1
+counter(3, { type: "INCREMENT", payload: 2 }) // 5
+counter(3, { type: "RESET" }) // 1
+counter(3, { type: "LOAD_ITEMS" }) // 3
 ```
 
 ### 5. Local State with `filteredReducer`
@@ -137,7 +141,7 @@ store.dispatch({ type: "INCREMENT", meta: { namespace: "@WIDGET-B" } })
 // { widgetA: 1, widgetB: 1 }
 ```
 
-To reducer boilerplate we can introduce `filteredReducer` function (see ):
+Next, we introduce `filteredReducer` function:
 
 ```js
 // Before Ramda
