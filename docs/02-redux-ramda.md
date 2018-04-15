@@ -42,14 +42,55 @@ const mapStateToProps = R.applySpec({
 })
 ```
 
-### 3. Replacing `switch` in reducer
+### 3. Replacing `switch` inside reducer
 
 Work in progress
 
 ---
 
+```js
+// Before Ramda:
+cosnt initialState = 0;
+const counter = (state = initialState, action) => switch (action.type) {
+	case "INCREMENT":
+		return state + action.payload;
+	case "RESET":
+		return initialState;
+	default:
+		return state;
+```
 
-### 4. Local State with `filteredReducer` #1
+```js
+// After Ramda
+
+// Firstly we introduce `switchReducer` function:
+
+const getActionType = compose(R.path(["type"]), R.nthArg(1))
+const getPayload = R.path(["payload"])
+const isUndefined = R.o(R.equals("Undefined"), R.type)
+
+const switchReducer = (initialState, rs) => R.compose(
+  R.cond,
+  R.prepend([isUndefined, R.always(initialState)]),
+  R.append([R.T, R.identity]),
+  R.map(
+    ([type, fn]) => [
+      R.compose(R.equals(type), getActionType),
+      (state, action) => fn(state, getPayload(action))
+    ])
+)(rs);
+
+// Than we can every reducer write with following convenient API:
+const initialState = 1
+const counter = switchReducer(initialState, [
+	["INCREMENT", (state, payload) => state + payload],
+	["RESET", R.always(initialState)],
+]);
+
+
+```
+
+### 4. Local State with `filteredReducer`
 
 In examples we will use following reducer:
 
@@ -62,8 +103,8 @@ Lets see following code as an introduction to the problem:
 ```js
 
 const root = combineReducers({
-	widgetA: add,
-	widgetB: add
+  widgetA: add,
+  widgetB: add
 })
 
 // { widgetA: 0, widgetB: 0 }
@@ -80,10 +121,10 @@ Following most verbose solution uses `action.meta` to determine if the `add` red
 
 ```js
 const root = combineReducers({
-	widgetA: (state, action) =>
-		action.meta && action.meta.namespace === "@WIDGET-A" ? add(state, action) : state,
-	widgetB:(state, action) =>
-		action.meta && action.meta.namespace === "@WIDGET-B" ? add(state, action) : state,
+  widgetA: (state, action) =>
+    action.meta && action.meta.namespace === "@WIDGET-A" ? add(state, action) : state,
+  widgetB:(state, action) =>
+    action.meta && action.meta.namespace === "@WIDGET-B" ? add(state, action) : state,
 })
 
 // { widgetA: 0, widgetB: 0 }
@@ -100,16 +141,35 @@ To reducer boilerplate we can introduce `filteredReducer` function (see ):
 
 ```js
 // Before Ramda
-const filteredReducer = (cond, reducer) =>
-	(state, action) =>
-		cond(action) ? reducer(state, action) : state;
+const filteredReducer = (pred, reducer) =>
+  (state, action) =>
+    pred(action) ? reducer(state, action) : state;
 
 const namespaceEquals = (ns) => (action) => action.meta && action.meta.namespace === ns
 
 // ...
 
 const root = combineReducers({
-	widgetA: filteredReducer(namespaceEquals("@WIDGET-A"), add),
-	widgetB: filteredReducer(namespaceEquals("@WIDGET-B"), add),
+  widgetA: filteredReducer(namespaceEquals("@WIDGET-A"), add),
+  widgetB: filteredReducer(namespaceEquals("@WIDGET-B"), add),
+  global: add,
+})
+```
+
+```js
+// After Ramda
+const filteredReducer = (pred, reducer) => R.cond([
+  [R.flip(pred), reducer],
+  [R.T, R.nthArg(0)]
+])
+
+const namespaceEquals = R.pathEq(["meta", "namespace"])
+
+// ...
+
+const root = combineReducers({
+  widgetA: filteredReducer(namespaceEquals("@WIDGET-A"), add),
+  widgetB: filteredReducer(namespaceEquals("@WIDGET-B"), add),
+  global: add,
 })
 ```
