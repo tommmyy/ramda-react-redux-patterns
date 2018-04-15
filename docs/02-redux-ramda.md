@@ -60,31 +60,27 @@ const counter = (state = initialState, action) => switch (action.type) {
 ```js
 // After Ramda
 
-// Firstly we introduce `switchReducer` function:
+// Firstly we introduce `switchReducer` function
 
-const getActionType = compose(R.path(["type"]), R.nthArg(1))
-const getPayload = R.path(["payload"])
-const isUndefined = R.o(R.equals("Undefined"), R.type)
+const isUndefined = R.o(R.equals("Undefined"), R.type);
+const overHead = R.over(R.lensIndex(0));
+const toActionTypeEquals = (type) => R.flip(R.whereEq({ type }));
 
-const switchReducer = (initialState, rs) => R.compose(
+const switchReducer = (rs, initialState) => R.compose(
   R.cond,
   R.prepend([isUndefined, R.always(initialState)]),
   R.append([R.T, R.identity]),
-  R.map(
-    ([type, fn]) => [
-      R.compose(R.equals(type), getActionType),
-      (state, action) => fn(state, getPayload(action))
-    ])
+  R.map(overHead(toActionTypeEquals))
 )(rs);
 
 //...
 
 // Than we can write every reducer with following convenient API:
 const initialState = 1
-const counter = switchReducer(initialState, [
-	["INCREMENT", (state, payload) => state + payload],
-	["RESET", R.always(initialState)],
-]);
+const counter = switchReducer([
+  ["INCREMENT", (state, action) => state + action.payload],
+  ["RESET", R.always(initialState)],
+], initialState);
 
 // ...
 
