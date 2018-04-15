@@ -79,7 +79,7 @@ const switchReducer = (initialState, rs) => R.compose(
 
 //...
 
-// Than we can every reducer write with following convenient API:
+// Than we can write every reducer with following convenient API:
 const initialState = 1
 const counter = switchReducer(initialState, [
 	["INCREMENT", (state, payload) => state + payload],
