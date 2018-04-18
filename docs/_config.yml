@@ -11,6 +11,6 @@ kramdown:
   parse_block_html: true
 toc:
   min_level: 2
-#baseurl: "/ramda-react-redux-patterns"
-baseurl: ""
+
+baseurl: "/ramda-react-redux-patterns"
 url: "https://tommmyy.github.io/"
