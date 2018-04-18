@@ -1,5 +1,15 @@
-theme: jekyll-theme-cayman
+remote_theme: Sylhare/Type-on-Strap
+
+theme_settings:
+  title: React and Ramda patterns       # Name of website
+#   avatar: assets/img/triangular.svg     # Path of avatar image, to be displayed in the theme's header
+#   gravatar: f98....6bfc                 # MD5 hash of your email address
+  description: Patterns and techniques for Ramda and React with Ramda library            # Short description, primarily used by search engines
+
 title: React and Ramda patterns
-show_downloads: false
 kramdown:
   parse_block_html: true
+toc:
+  min_level: 2
+#baseurl: "/ramda-react-redux-patterns"
+#url: "https://tommmyy.github.io/"

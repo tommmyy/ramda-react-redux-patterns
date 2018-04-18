@@ -1,7 +1,5 @@
 # Redux patterns
 
-{% include toc.html %}
-
 ## Patterns
 
 ### 1. Selectors

@@ -1,6 +1,6 @@
 # React patterns
 
-{% include toc.html %}
+{% include toc.html html=content %}
 
 ## Introduction
 
@@ -221,18 +221,30 @@ const SectionWithUpperHeading = mapProps(
 ### Refactor of pointfree `mapProps`
 
 ```js
-const mapProps = R.curry((mapping, C) => (props) => <C {...mapping(props)} />);
+const mapProps = R.curry(
+  (mapping, C) => (props) => <C {...mapping(props)} />
+);
 
 // Replacing JSX
-const mapProps = R.curry((mapping, C) => (props) => React.createElement(C, mapping(props)));
+const mapProps = R.curry(
+  (mapping, C) => (props) => React.createElement(C, mapping(props))
+);
 
 // Introducting curried version of React.createElement
 const createElement = R.curryN(2, React.createElement);
-const mapProps = R.curry((mapping, C) => (props) => renderComponent(C)(mapping(props)))
 
-// unnest calling of function with R.o
+const mapProps = R.curry(
+  (mapping, C) => (props) => renderComponent(C)(mapping(props))
+)
+
+// R.o for functional composition
+const mapProps = R.curry(
+  (mapping, C) => (props) => R.o(renderComponent(C), mapping)(props)
+)
+
+// removing explicit argument `props`
 const mapProps = R.curry((mapping, C) => R.o(renderComponent(C), mapping))
 
-// final version pointfree version with R.flip
+// final pointfree version with R.flip
 const mapProps = R.flip(R.useWith(R.o, [renderComponent, R.identity]));
 ```
