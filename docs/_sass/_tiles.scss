@@ -1,0 +1,14 @@
+.tiles {
+	display: flex;
+	text-align: center;
+
+	&-tile {
+		width: 50%;
+		display: inline-block;
+	}
+
+	.img {
+		width: 100%;
+		height: auto;
+	}
+}

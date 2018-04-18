@@ -1,16 +1,15 @@
+#baseurl: ""
+#url: ""
+
 remote_theme: Sylhare/Type-on-Strap
 
 theme_settings:
-  title: React and Ramda patterns       # Name of website
-#   avatar: assets/img/triangular.svg     # Path of avatar image, to be displayed in the theme's header
-#   gravatar: f98....6bfc                 # MD5 hash of your email address
-  description: Patterns and techniques for Ramda and React with Ramda library            # Short description, primarily used by search engines
+  title: Use Ramda with React and Redux
+  avatar: assets/img/triangle.svg
+  description: Patterns and techniques for Ramda and React with Ramda library
+  github: tommmyy
+  google_fonts: Source+Sans+Pro:400,700,700italic,400italic
 
 title: React and Ramda patterns
 kramdown:
   parse_block_html: true
-toc:
-  min_level: 2
-
-baseurl: "/ramda-react-redux-patterns"
-url: "https://tommmyy.github.io/"
