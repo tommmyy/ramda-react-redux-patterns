@@ -70,29 +70,57 @@ const createAction = (type, getPayload, getMeta) =>
     type,
     payload: getPayload(payload),
     meta: getMeta(meta),
-  })
-const createConstantAction = (type) => createAction(type, x => undefined, () => undefined);
-const createSimpleAction = (type) => createAction(type, x => x, () => undefined);
+  });
 
-const reset = createContantAction("RESET")
+const createConstantAction = (type) => createAction(
+  type,
+  x => undefined,
+  () => undefined
+);
+
+const createSimpleAction = (type) => createAction(
+  type,
+  x => x,
+  () => undefined
+);
+
+// ...
+
+const reset = createConstantAction("RESET")
 const increment = createSimpleAction("INCREMENT");
-const fetchItems = createAction("FETCH_ITEMS", (x) => x.items, () => ({ page: 0 }))
+const fetchItems = createAction(
+  "FETCH_ITEMS",
+  (x) => x.items,
+  () => ({ page: 0 })
+)
 ```
+
+*Note:* The above code is not quite ideal. Because call `reset()` gives you:
+```js
+{"meta": undefined, "payload": undefined, "type": "RESET"}
+```
+
+Ramda version bellow solves the problem by filtering out unspecified values.
 
 ```js
 // After Ramda
-const createAction = R.curry((type, getPayload, getMeta) => R.compose(
-  R.reject(R.isNil),
-  R.applySpec({
-    type: R.always(type),
-    payload: getPayload,
-    meta: getMeta,
-  })));
+const createAction = R.curry(
+  (type, getPayload, getMeta) => R.compose(
+    R.reject(R.isNil),
+    R.applySpec({
+      type: R.always(type),
+      payload: getPayload,
+      meta: getMeta,
+    })
+  )
+);
 const createSimpleAction = createAction(R.__, R.identity, R.always(null));
 const createContantAction = createAction(R.__, R.always(null), R.always(null));
 
-const increment = createSimpleAction("INCREMENT");
+// ...
+
 const reset = createContantAction("RESET")
+const increment = createSimpleAction("INCREMENT");
 const fetchItems = createAction("FETCH_ITEMS", R.prop("items"), R.always({ page: 0 }))
 ```
 
@@ -101,14 +129,15 @@ const fetchItems = createAction("FETCH_ITEMS", R.prop("items"), R.always({ page:
 ```js
 // Before Ramda:
 cosnt initialState = 0;
-const counter = (state = initialState, action) => switch (action.type) {
-  case "INCREMENT":
-    return state + action.payload;
-  case "RESET":
-    return initialState;
-  default:
-    return state;
-}
+const counter = (state = initialState, action) =>
+  switch (action.type) {
+    case "INCREMENT":
+      return state + action.payload;
+    case "RESET":
+      return initialState;
+    default:
+      return state;
+  }
 ```
 
 ```js
